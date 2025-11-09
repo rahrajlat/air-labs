@@ -1,0 +1,48 @@
+# pyproject.toml (repo root)
+
+[project]
+name = "air-labs"
+version = "0.1.1"  # <── bump this (or 0.1.0.post1)
+description = "Extra power-ups for Apache Airflow — a collection of plugins."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+authors = [{ name = "Rahul Rajasekharan" }]
+license = { text = "MIT" }
+
+# 👇 No required dependencies at root
+dependencies = []
+
+# 👇 Users cherry-pick via extras
+[project.optional-dependencies]
+helpers = ["air-labs-helpers>=0.1.0"]
+bulk    = ["air-labs-bulk-pause-api>=0.1.0"]
+ui      = ["air-labs-bulk-pause-unpause-ui>=0.1.0"]
+all     = [
+  "air-labs-helpers>=0.1.0",
+  "air-labs-bulk-pause-api>=0.1.0",
+  "air-labs-bulk-pause-unpause-ui>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.22"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/airflow_lab"]
+
+[tool.hatch.build]
+include = ["src/air_labs/**", "README.md"]
+
+# Dev workspace so contributors can work on all packages together
+[tool.uv.workspace]
+members = [
+  "plugins/air_labs_helpers",
+  "plugins/air_labs_bulk_pause_api",
+  "plugins/air_labs_bulk_pause_unpause_ui",
+]
+
+[tool.uv.sources]
+air-labs-helpers          = { workspace = true }
+air-labs-bulk-pause-api        = { workspace = true }
+air-labs-bulk-pause-unpause-ui = { workspace = true }
+

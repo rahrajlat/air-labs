@@ -1,0 +1,37 @@
+# plugins/air_labs_bulk_pause_api/pyproject.toml
+
+[build-system]
+# 🆕 Added — required by PEP 621 to tell Hatchling how to build
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "air-labs-bulk-pause-api"
+version = "0.1.1"                      # 🆕 Bumped version (you can’t overwrite 0.1.7)
+description = "FastAPI plugin to pause/unpause Airflow DAGs in bulk."  # 🆕 Added human-readable summary
+
+# 🆕 Added: this tells PyPI/TestPyPI which file to use for the project page
+readme = { file = "README.md", content-type = "text/markdown" }
+
+requires-python = ">=3.9"
+
+# 🆕 Added license and author info (recommended by PyPI)
+license = { text = "MIT" }
+authors = [{ name = "Rahul Rajasekharan" }]
+
+dependencies = [
+  "air-labs-helpers>=0.1.0",
+]
+
+[project.entry-points."airflow.plugins"]
+air_labs_bulk_pause_api = "air_labs_bulk_pause_api.air_labs_bulk_pause_api:AirflowBulkPause"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/air_labs_bulk_pause_api"]
+
+[tool.hatch.build.targets.sdist]
+# 🆕 Added: include README and LICENSE in source distribution too
+include = ["src/air_labs_bulk_pause_api/**", "README.md", "LICENSE*"]
+
+[tool.hatch.build]
+include = ["src/air_labs_bulk_pause_api/**", "README.md", "LICENSE*"]
