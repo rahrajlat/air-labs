@@ -1,6 +1,6 @@
-# 🧰 Airflow-Xtra Helpers
+# 🧰 Air-Labs Helpers
 
-The **Helpers** module provides shared utilities used across all Airflow-Xtra plugins.  
+The **Helpers** module provides shared utilities used across all Air-Labs plugins.  
 It standardizes how plugins interact with the Airflow REST API and connection management.
 
 ---
@@ -17,7 +17,7 @@ It standardizes how plugins interact with the Airflow REST API and connection ma
 ## 🧮 Usage Example
 
 ```python
-from airflow_xtra_helpers.client import AirflowClient
+from air_labs_helpers.client import AirflowClient
 
 client = AirflowClient(conn_id="airflow_api_conn")
 report = client.pause_dags(name_prefix="etl_")
