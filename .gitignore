@@ -207,3 +207,5 @@ marimo/_lsp/
 __marimo__/
 # Ignore macOS system files
 .DS_Store
+.bin
+**/node_modules/
