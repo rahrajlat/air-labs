@@ -10,6 +10,7 @@
 ---
 > ⚠️ **Note:**  
 > The Air-Labs plugins are designed to **enhance developer experience** and **simplify data engineering workflows**.  
+> The Air-Labs plugins uses the new React feature of Airflow 3.1 and hence it works only on Airflow >= 3.1
 > While they are built with production-quality patterns, they **must be tested thoroughly** before use in production workloads to ensure stability and compatibility with your environment.
 
 ---
@@ -50,13 +51,13 @@ You can install the Air-Labs components directly from TestPyPI:
 
 ```bash
 # Install helpers
-pip install -i https://test.pypi.org/simple/ air-labs-helpers
+pip install air-labs-helpers
 
 # Install API plugin
-pip install -i https://test.pypi.org/simple/ air-labs-bulk-pause-api
+pip install air-labs-bulk-pause-api
 
 # Install UI plugin
-pip install -i https://test.pypi.org/simple/ air-labs-bulk-pause-unpause-ui
+pip install air-labs-bulk-pause-unpause-ui
 ```
 
 ---

@@ -1,0 +1,10 @@
+requests>=2.32.0
+urllib3>=2.2.0
+python-dotenv>=1.0.1
+agno==2.2.3
+ollama
+dbt-core
+dbt-postgres==1.9.1
+astronomer-cosmos
+#Repo requirements
+#apache-airflow==3.1
