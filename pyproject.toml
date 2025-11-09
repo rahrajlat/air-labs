@@ -10,7 +10,9 @@ authors = [{ name = "Rahul Rajasekharan" }]
 license = { text = "MIT" }
 
 # 👇 No required dependencies at root
-dependencies = []
+dependencies = [
+    "twine>=6.2.0",
+]
 
 # 👇 Users cherry-pick via extras
 [project.optional-dependencies]
