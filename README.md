@@ -72,8 +72,6 @@ uv sync
 ```
 
 ---
-[![PyPI Downloads](https://static.pepy.tech/personalized-badge/air-labs-bulk-pause-unpause-ui?period=total&units=NONE&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/air-labs-bulk-pause-unpause-ui)
-
 ## 🧾 License
 
 MIT © [Rahul Rajasekharan](https://github.com/rahulrajasekharan)
