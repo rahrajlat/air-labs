@@ -206,7 +206,7 @@ export OPENAI_API_KEY="sk-..."
 
 ## 🔧 Usage
 
-### Initialize templates
+### Initialize templates ( Creates prompts & can be customised)
 
 ```bash
 dbt-tools init --project-dir .
