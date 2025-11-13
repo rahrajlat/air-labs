@@ -175,6 +175,23 @@ Requires:
 
 ---
 
+
+## ⚙️ Environment Variables
+
+To avoid passing arguments repeatedly, you can set environment variables:
+
+```bash
+# Ollama (local)
+export OLLAMA_HOST="http://ubuntu-pc.local:11434"
+export OLLAMA_MODEL="llama3.1:8b-instruct-q8_0"
+export TEMPERATURE=0.2
+
+# (Future) OpenAI or compatible APIs
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+export OPENAI_MODEL="gpt-4o-mini"
+export OPENAI_API_KEY="sk-..."
+```
+
 ## 🔧 Usage
 
 ### Initialize templates
@@ -218,19 +235,4 @@ dbt-tools llm-docs-generate   --project-dir .   --target-dir target   --use_data
 MIT (or your preferred license)
 
 
-## ⚙️ Environment Variables
-
-To avoid passing arguments repeatedly, you can set environment variables:
-
-```bash
-# Ollama (local)
-export OLLAMA_HOST="http://ubuntu-pc.local:11434"
-export OLLAMA_MODEL="llama3.1:8b-instruct-q8_0"
-export TEMPERATURE=0.2
-
-# (Future) OpenAI or compatible APIs
-export OPENAI_BASE_URL="https://api.openai.com/v1"
-export OPENAI_MODEL="gpt-4o-mini"
-export OPENAI_API_KEY="sk-..."
-```
 
