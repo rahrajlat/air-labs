@@ -1,0 +1,25 @@
+[project]
+name = "dbt-tools"
+version = "0.1.0"
+description = "CLI to auto-generate dbt docs using LLMs (Ollama-first)."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{name="Your Name"}]
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.7",
+  "pydantic>=2.7",
+  "ruamel.yaml>=0.18",
+  "jinja2>=3.1",
+  "ollama>=0.3.0",
+  "openai>=2.7.2",
+  "pandas>=2.3.3",
+  "SQLAlchemy>=2.0.44"
+]
+
+[project.scripts]
+dbt-tools = "dbt_tools.cli:app"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
