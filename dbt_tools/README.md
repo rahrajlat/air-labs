@@ -200,7 +200,6 @@ dbt-tools llm-docs-generate --project-dir . --target-dir target --backend openai
 
 # 📘 Example of Generated Documentation
 
-Below is the **full example you provided** (included exactly as requested).
 
 ```yaml
 - name: stg_products
