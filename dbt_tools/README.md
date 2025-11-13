@@ -223,7 +223,7 @@ dbt-tools  list --project-dir . --target-dir target
 ### Default behaviour is to use ollama
 
 ```bash
-dbt-tools llm-docs-generate -project-dir . --target-dir target --select dim_customers 
+dbt-tools llm-docs-generate   --project-dir . --target-dir target --select dim_customers 
 ```
 
 ### Generate documentation with real data profiling
