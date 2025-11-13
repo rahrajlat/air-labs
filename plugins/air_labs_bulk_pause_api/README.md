@@ -22,6 +22,17 @@ The **Bulk Pause / Unpause API** provides REST endpoints to manage DAGs programm
 
 ---
 
+## 📦 Installation
+
+```bash
+pip install air-labs-bulk-pause-api
+```
+
+---
+## 🎥 Demo
+
+Bulk Pause / Unpause  
+👉 **[View Demo](../../demos/bulk_pause.gif)**
 
 ### Connection Setup (Required)
 

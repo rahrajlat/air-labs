@@ -13,9 +13,18 @@ The **Bulk Pause / Unpause UI** plugin provides a visual React-based interface i
 
 ---
 
+## 📦 Installation
+
+```bash
+pip install air-labs-bulk-pause-unpause-ui
+```
+
+---
+
 ## 🎥 Demo
 
-![Bulk Pause Demo](../../../demos/bulk_pause.gif)
+Bulk Pause / Unpause  
+👉 **[View Demo](../../demos/bulk_pause.gif)**
 
 ---
 

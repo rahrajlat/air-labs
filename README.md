@@ -1,85 +1,91 @@
 # 🚀 Air-Labs
 
-> **Reusable, production-ready Apache Airflow plugins — powered by FastAPI + React.**
+**A curated collection of reusable, production-friendly tools for Apache Airflow and dbt.**
 
-> A modular suite of UI and API extensions that make Airflow simpler, smarter, and more enjoyable to use.
+Air-Labs focuses on **developer experience** and **workflow acceleration** for data engineers:
+- React-based UI plugins for Airflow
+- FastAPI-powered API extensions
+- LLM-assisted tooling for dbt (with more dbt utilities coming soon)
 
-> 🧩 This repository will continue to be updated with **reusable, open-source plugins** for Airflow — including APIs, UIs, and automation tools.
-
-
----
-> ⚠️ **Note:**  
-> The Air-Labs plugins are designed to **enhance developer experience** and **simplify data engineering workflows**.  
-> The Air-Labs plugins uses the new React feature of Airflow 3.1 and hence it works only on Airflow >= 3.1
-> While they are built with production-quality patterns, they **must be tested thoroughly** before use in production workloads to ensure stability and compatibility with your environment.
+This repository acts as a **hub/index** – each component has its own dedicated README with details, setup steps, and examples.
 
 ---
 
-⭐ **If you like my work**, please **star the repo** and drop me a **like or comment on [LinkedIn](https://www.linkedin.com/in/rahul-rajasekharan-012506121/)** —  
-or explore my **[portfolio](https://rahul-portfolio-roan-eight.vercel.app/)** to see more of what I build.  
-Your encouragement motivates me to make this even better and release **more Airflow plugins in the coming weeks!**
+## 🧩 What’s Included
 
-## 🌟 Overview
+### 1. Airflow Plugins
 
-**Air-Labs** enhances Apache Airflow by introducing modular plugins that extend its UI and API.  
-Each plugin integrates seamlessly into the Airflow webserver — built using **FastAPI (backend)** and **React (frontend)** — and leverages Airflow’s stable REST API for automation.
+Air-Labs plugins are built for **Airflow ≥ 3.1**, using the new React-based plugin framework.  
+They integrate directly into the Airflow web UI and/or webserver process.
 
-> 🧩 This repository provides a growing collection of open-source, reusable Airflow extensions.
+| Plugin | Type | Summary | Docs |
+|--------|------|---------|------|
+| **Air-Labs Helpers** | Core library | Shared Python helpers for all plugins (connections, logging, request helpers, etc.). | [`plugins/air_labs_helpers/README.md`](plugins/air_labs_helpers/README.md) |
+| **Bulk Pause / Unpause API** | FastAPI plugin | Adds a REST API to pause/unpause multiple DAGs in a single call. Great for maintenance windows and bulk operations. | [`plugins/air_labs_bulk_pause_api/README.md`](plugins/air_labs_bulk_pause_api/README.md) |
+| **Bulk Pause / Unpause UI** | React UI | Airflow sidebar UI to search, filter, and pause/unpause DAGs in bulk directly from the browser. | [`plugins/air_labs_bulk_pause_unpause_ui/README.md`](plugins/air_labs_bulk_pause_unpause_ui/README.md) |
 
----
-
-## 📦 Components Airflow
-
-| Component | Description | Documentation |
-|------------|--------------|----------------|
-| **Helpers** | Core Python utilities and connection helpers used by all plugins. | [View Helpers Docs](plugins/air_labs_helpers/README.md) |
-| **Bulk Pause / Unpause API** | FastAPI-based Airflow plugin to pause or unpause DAGs in bulk. | [View API Docs](plugins/air_labs_bulk_pause_api/README.md) |
-| **Bulk Pause / Unpause UI** | React-powered UI extension integrated into the Airflow sidebar for bulk DAG control. | [View UI Docs](plugins/air_labs_bulk_pause_unpause_ui/README.md) |
-
-## 📦 Components DBT
-| Component | Description | Documentation |
-|------------|--------------|----------------|
-| **dbt-tools** | llm based docs cli tool for dbt. | [View Docs](dbt_tools/README.md) |
+> 🔎 See each plugin’s README for:
+> - Installation & deployment
+> - Screenshots / GIF demos
+> - Configuration & API details
 
 ---
 
-## 🎥 Demo
+### 2. dbt Tools (Sub-Category)
 
-Bulk Pause / Unpause
-👉 [Bulk Pause Demo](./demos/bulk_pause.gif)
+Air-Labs also includes a growing set of **dbt-focused utilities** aimed at improving documentation, discoverability, and metadata quality.
 
-DBT LLM Docs
-👉 [DBT LLM Docs](./demos/dbt.gif)
+| Tool | Focus | Summary | Docs |
+|------|-------|---------|------|
+| **dbt-power-tools** | LLM-powered docs | CLI to auto-generate dbt model & column descriptions using LLMs (Ollama-first), with optional SQL-aware logic and data profiling via `profiles.yml`. | [`dbt_tools/README.md`](dbt_tools/README.md) |
 
----
-
-## ⚙️ Installation
-
-You can install the Air-Labs components directly from TestPyPI:
-
-```bash
-# Install helpers
-pip install air-labs-helpers
-
-# Install API plugin
-pip install air-labs-bulk-pause-api
-
-# Install UI plugin
-pip install air-labs-bulk-pause-unpause-ui
-```
+> 🧱 More dbt tools will be added over time (lineage helpers, test explorers, catalog views, etc.). This README will remain the **index** to those tools.
 
 ---
 
-## 🧠 Development
+## ⚠️ Compatibility Overview
 
-To work on the project locally:
+- **Airflow plugins**  
+  - Designed for **Apache Airflow 3.1+**  
+  - Rely on the new React UI plugin framework  
+  - Should be tested thoroughly in your specific deployment (executor, auth, etc.)
 
-```bash
-uv venv --python 3.11 .venv
-uv sync
-```
+- **dbt tools**  
+  - Expect a compiled dbt project with `manifest.json` (and ideally `catalog.json`) under `target/`  
+  - Some features (like profiling) read from `profiles.yml` to connect to your warehouse  
+  - Work alongside, not instead of, the normal dbt CLI
 
 ---
+
+## 🧭 How to Navigate This Repo
+
+Use this root README as the **landing page**. For details, go to:
+
+- Airflow helpers: `plugins/air_labs_helpers/README.md`
+- Bulk Pause/Unpause API: `plugins/air_labs_bulk_pause_api/README.md`
+- Bulk Pause/Unpause UI: `plugins/air_labs_bulk_pause_unpause_ui/README.md`
+- dbt tools (LLM docs): `dbt_tools/README.md`
+
+Each subcomponent’s README covers:
+- Exact installation steps
+- Configuration examples
+- Code snippets
+- Demo GIFs
+
+---
+
+## 🙌 Support & Contact
+
+If you find this useful, you can:
+
+- ⭐ Star the repository  
+- 🔗 Connect on LinkedIn: https://www.linkedin.com/in/rahul-rajasekharan-012506121/  
+- 🌐 Explore more projects: https://rahul-portfolio-roan-eight.vercel.app/
+
+Feedback, issue reports, and ideas for new plugins/tools are always welcome 🚀
+
+---
+
 ## 🧾 License
 
-MIT © [Rahul Rajasekharan](https://github.com/rahulrajasekharan)
+MIT © Rahul Rajasekharan

@@ -1,268 +1,304 @@
-# dbt-llm-docs
+# dbt-power-tools
 
-A powerful CLI tool that generates **LLM-powered documentation** for dbt models and columns and writes them directly into your `schema.yml` so the results appear in `dbt docs serve`.
+A powerful CLI tool that generates **LLM-powered documentation** for dbt models and columns — written directly into your `schema.yml`, ready to appear in **dbt Docs**.
 
-This CLI uses Jinja2 prompt templates plus a pluggable LLM backend (Ollama or OpenAI).  
-Optionally, it can connect to your **actual warehouse** (Postgres & Redshift today) and profile real data to give the LLM deeper context for column descriptions.
+It supports both **schema-only documentation** and **data-aware documentation** by profiling your warehouse data and feeding summary statistics to the LLM for enhanced accuracy.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
-### ✅ 1. LLM-generated model + column documentation  
-Produces rich, clear Markdown text suitable for dbt docs.  
-Descriptions are written directly into `schema.yml`.
+### ✅ LLM‑generated dbt documentation  
+- Generates rich model & column descriptions  
+- Writes directly into `schema.yml`  
+- Fully dbt‑docs compatible  
 
-### ✅ 2. Customizable Jinja2 prompt templates  
-Located in `<project>/prompts/`.  
-You can fully customize the writing style, voice, or structure.
+### ✅ Customizable Jinja prompt templates  
+Located in `<project>/prompts/`  
+You can rewrite the tone, style, or structure.
 
-### ✅ 3. dbt-aware selection  
-Supports:
-- `--select`
-- `--exclude`
-- `--tags`
-- Glob-like patterns (`stg_*`, `marts.*`)
+### ✅ dbt-aware model selection  
+Supports:  
+- `--select`, `--exclude`, `--tags`  
+- Glob patterns (`stg_*`, `marts.*`)  
 - Parent/child expansion (`+model_name`)
 
-### ✅ 4. Data-aware documentation (`--use_data Y`)  
-When enabled, the tool:
+### ✅ Optional data profiling (`--use_data Y`)  
+When enabled:
 
-1. Reads database connection info **from `profiles.yml`**  
-2. Connects to the warehouse (**Postgres & Redshift** supported today)  
-3. Executes the model’s compiled SQL  
-4. Samples rows and computes:  
+1. Reads warehouse credentials **from profiles.yml**  
+2. Runs the model’s **compiled SQL**  
+3. Profiles real data (Postgres & Redshift supported today)  
+4. Computes:  
    - Missing %  
    - Unique %  
    - Min / Max  
    - Mean / Std  
    - Example values  
-5. Passes these stats to the LLM for smarter, context-rich documentation  
-6. Appends a Markdown statistics table under each column description in dbt Docs
+5. LLM uses this context to produce *far higher‑quality* column docs  
+6. A Markdown stats table is appended to each column description  
+7. These appear in **dbt Docs → Documentation UI**
 
-> 🛠️ **Support for more databases (Snowflake, BigQuery, Databricks)** is coming soon.
-
----
-
-## 🔒 Data Privacy Note
-
-If `--use_data Y` is enabled, the *profile summary* (NOT raw data) is sent to the selected LLM backend.
-
-If your organization forbids sending data outside the network, you should use:
-
-```
-dbt-llm-docs llm-docs-generate --backend ollama
-```
-
-Because **Ollama runs 100% locally**, ensuring no prompts or data ever leave your machine.
+### 🔒 Local LLM supported (Ollama)  
+Ensures **zero data leaves your machine**, making it suitable for sensitive environments.
 
 ---
 
+# ⚠️ Requirement: Compiled dbt Project
 
-## 🧱 Architecture Overview
+Before using this tool, run:
+
+```bash
+dbt docs generate
+```
+
+Your project must contain:
+
+- `target/manifest.json` (required)
+- `target/catalog.json` (optional but recommended)
+- `profiles.yml` (if using profiling mode)
+
+---
+
+# 🧱 Architecture Overview
 
 ```mermaid
 flowchart LR
 
     subgraph DBT["dbt project"]
-        DbtModels["dbt models (*.sql)"]
-        SchemaYml["schema.yml (descriptions)"]
+        DbtModels["*.sql (models)"]
+        SchemaYml["schema.yml"]
         DbtProjectYml["dbt_project.yml"]
     end
 
-    subgraph Target["target/ directory"]
+    subgraph Target["target/"]
         Manifest["manifest.json"]
-        Catalog["catalog.json (optional)"]
+        Catalog["catalog.json"]
     end
 
     subgraph Profiles["profiles.yml"]
         ProfileDev["dev target (Postgres / Redshift)"]
     end
 
-    subgraph CLI["dbt-llm-docs CLI"]
-        Typer["Typer CLI (init, list, generate)"]
-        Prompts["Jinja templates (model.md.j2, column.md.j2)"]
-        Selector["Model selector (--select / --exclude / --tags)"]
-        Profiler["Optional data profiler (--use_data Y)"]
-        Writer["Writes descriptions to schema.yml"]
+    subgraph CLI["dbt-power-tools CLI"]
+        TyperCLI["Typer CLI"]
+        Prompts["Jinja prompts"]
+        Selector["dbt selector engine"]
+        Profiler["Data profiler (--use_data Y)"]
+        Writer["YAML writer"]
     end
 
-    subgraph LLMBackends["LLM Backends"]
+    subgraph LLM["LLM Backends"]
         Ollama["Ollama (local)"]
-        OpenAI["OpenAI / compatible (cloud)"]
+        OpenAI["OpenAI / Cloud"]
     end
 
-    subgraph Warehouse["Data Warehouse"]
+    subgraph Warehouse["Warehouse"]
         DB["Postgres / Redshift"]
     end
 
     DbtModels --> Target
-    DbtProjectYml --> Profiles
-
-    Target --> CLI
+    Manifest --> CLI
     Catalog --> CLI
     Profiles --> Profiler
     DB --> Profiler
 
-    Prompts --> Typer
-    Typer --> Selector
-    Selector --> LLMBackends
-
-    Profiler --> LLMBackends
-    LLMBackends --> Writer
-
+    Prompts --> TyperCLI
+    TyperCLI --> Selector
+    Selector --> LLM
+    Profiler --> LLM
+    LLM --> Writer
     Writer --> SchemaYml
-    SchemaYml --> DocsUI["dbt docs UI"]
+    SchemaYml --> Docs["dbt Docs UI"]
 
 ```
 
-> ### ⚠️ Important: Requires a Compiled dbt Project
-> `dbt-llm-docs` depends on dbt’s generated artifacts.  
-> Before running this tool, your dbt project **must be compiled** and the following files must exist in your `target/` directory:
->
-> - `manifest.json` — required  
-> - `catalog.json` — optional but recommended for accurate column types  
->
-> Generate them using:
->
-> ```bash
-> dbt docs generate
-> ```
->
-> If these artifacts are missing, the tool cannot discover models, columns, SQL, or metadata needed for documentation.
+---
 
-## 🤖 Installing Ollama (Recommended for Privacy)
+# 🤖 Installing Ollama (Recommended)
 
 ### macOS / Linux
-
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
-Run Ollama:
-
+Start the server:
 ```bash
 ollama serve
 ```
 
-Download a model:
-
+Pull a model:
 ```bash
 ollama pull llama3.1
 ```
 
-### Windows (WSL recommended)
-
-Refer to: https://ollama.com/download
-
 ---
 
-## 📦 Installation Pypi
+# 📦 Installation (PyPI)
 
 ```bash
-
 pip install dbt-power-tools
-
 ```
 
-## 📦 Installation from source
+# 📦 Install from source
 
 ```bash
-
-git clone 
-cd dbt-tools
+git clone <repo>
+cd dbt-power-tools
 
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-
-
-
 ```
-
-Requires:
-
-- `manifest.json` (run `dbt docs generate`)
-- Optionally `catalog.json` for column types
 
 ---
 
-
-## ⚙️ Environment Variables
-
-To avoid passing arguments repeatedly, you can set environment variables:
+# ⚙️ Environment Variables
 
 ```bash
-# Ollama (local)
-export OLLAMA_HOST="http://ubuntu-pc.local:11434"
+# Local Ollama
+export OLLAMA_HOST="http://localhost:11434"
 export OLLAMA_MODEL="llama3.1:8b-instruct-q8_0"
 export TEMPERATURE=0.2
 
-# (Future) OpenAI or compatible APIs
+# (Future) Cloud LLMs
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_MODEL="gpt-4o-mini"
 export OPENAI_API_KEY="sk-..."
 ```
 
-## 🔧 Usage
+---
 
-### Initialize templates ( Creates prompts & can be customised)
+# 🔧 Usage
 
+### Initialize templates
 ```bash
 dbt-tools init --project-dir .
 ```
 
 ### List models
-
 ```bash
-dbt-tools  list --project-dir . --target-dir target
+dbt-tools list --project-dir . --target-dir target
 ```
 
 ### Generate documentation (local LLM)
-
-### Default behaviour is to use ollama
-
 ```bash
-dbt-tools llm-docs-generate   --project-dir . --target-dir target --select dim_customers 
+dbt-tools llm-docs-generate --project-dir . --target-dir target --select dim_customers
 ```
 
-### Generate documentation with real data profiling
-
+### With real data profiling
 ```bash
-dbt-tools llm-docs-generate   --project-dir . --target-dir target --select dim_customers --use-data Y
+dbt-tools llm-docs-generate --project-dir . --target-dir target --select dim_customers --use-data Y
 ```
 
-
-### Generate documentation (open-ai)
-
-
+### Use OpenAI backend
 ```bash
-dbt-tools llm-docs-generate -project-dir . --target-dir target --select dim_customers --backend openai
+dbt-tools llm-docs-generate --project-dir . --target-dir target --backend openai
 ```
-
-### Generate documentation with real data profiling
-
-```bash
-dbt-tools llm-docs-generate   --project-dir . --target-dir target --select dim_customers --use-data Y
-```
-
-
 
 ---
 
-## 🛣️ Roadmap
+# 📘 Example of Generated Documentation
 
-- More warehouse support (Snowflake, BigQuery, Databricks)
-- LLM caching
-- Partial regeneration
-- Inline docs (`docs/*.md`) generation
-- Lineage-aware descriptions
+
+```yaml
+- name: stg_products
+  description: The `stg_products` model represents a staging process that 
+    aggregates product information from the "products" table in the database. 
+    It reads from this staging area, transforming raw product data into a 
+    standardized format for analysis and reporting purposes. The main 
+    transformations include standardizing product names and categories to 
+    title case, converting list prices to a consistent numeric format, and 
+    casting product IDs as integers. This model maintains one row per unique 
+    product, providing a detailed view of each item in the catalog. Analysts 
+    can use this dataset to analyze product offerings, pricing strategies, or 
+    customer preferences by product category.
+  columns:
+    - name: product_id
+      description: "The `product_id` column uniquely identifies each product in
+        the database, serving as a primary key that links related data across different
+        tables and models. It represents a unique identifier assigned to each product,
+        allowing for efficient querying and joining of product-related information.
+
+**Column statistics**
+
+| Metric       | Value |
+|-------------|--------|
+| Missing %    | 0.0% |
+| Unique %     | 100.0% |
+| Min          | 10.00 |
+| Max          | 13.00 |
+| Mean         | 11.50 |
+| Std dev      | 1.29 |
+| Examples     | 10, 11, 12 |
+"
+
+    - name: product_name
+      description: "The `product_name` column represents the name of a product in
+        the database, capturing its descriptive label used to identify and distinguish
+        it from other products.
+
+**Column statistics**
+
+| Metric       | Value |
+|-------------|--------|
+| Missing %    | 0.0% |
+| Unique %     | 100.0% |
+| Min          | n/a |
+| Max          | n/a |
+| Mean         | n/a |
+| Std dev      | n/a |
+| Examples     | Keyboard, Mouse, Monitor |
+"
+
+    - name: category
+      description: "The `category` column represents a product's classification.
+
+**Column statistics**
+
+| Metric       | Value |
+|-------------|--------|
+| Missing %    | 0.0% |
+| Unique %     | 75.0% |
+| Min          | n/a |
+| Max          | n/a |
+| Mean         | n/a |
+| Std dev      | n/a |
+| Examples     | Peripherals, Display, Accessories |
+"
+
+    - name: list_price
+      description: "The `list_price` column represents the product’s price.
+
+**Column statistics**
+
+| Metric       | Value |
+|-------------|--------|
+| Missing %    | 0.0% |
+| Unique %     | 100.0% |
+| Min          | 7.99 |
+| Max          | 149.99 |
+| Mean         | 50.87 |
+| Std dev      | 66.71 |
+| Examples     | 30.0, 15.5, 149.99 |
+"
+```
 
 ---
 
-## 📄 License
+# 🛣️ Roadmap
 
-MIT (or your preferred license)
+- More warehousing support: **Snowflake, BigQuery, Databricks**
+- Cache LLM responses for faster reruns
+- Generate inline docs (`docs/*.md`)
+- Generate lineage-aware documentation
+- AI-assisted test generation
+- Auto-fix missing refs & sources
 
+---
 
+# 📄 License
+
+MIT © Rahul Rajasekharan  
+https://www.linkedin.com/in/rahul-rajasekharan-012506121/
 
