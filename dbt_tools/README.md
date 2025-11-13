@@ -114,7 +114,7 @@ flowchart LR
     Writer --> SchemaYml
     SchemaYml --> DocsUI["dbt docs UI"]
 
-
+```
 
 ## 🤖 Installing Ollama (Recommended for Privacy)
 
