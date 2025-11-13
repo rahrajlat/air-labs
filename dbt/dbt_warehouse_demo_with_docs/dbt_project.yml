@@ -1,0 +1,25 @@
+name: 'dbt_warehouse_demo'
+version: '1.0.0'
+config-version: 2
+
+profile: 'dbt_warehouse_demo'
+
+model-paths: ['models']
+seed-paths: ['seeds']
+macro-paths: ['macros']
+test-paths: ['tests']
+
+models:
+  dbt_warehouse_demo:
+    +materialized: table
+    stage:
+      +schema: stage
+    intermediate:
+      +schema: intermediate
+    core:
+      +schema: core
+
+seeds:
+  dbt_warehouse_demo:
+    +schema: stage
+    +quote_columns: false

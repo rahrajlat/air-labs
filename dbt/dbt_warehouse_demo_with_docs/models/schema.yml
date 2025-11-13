@@ -1,0 +1,62 @@
+models:
+  - name: int_order_agg
+    description: The `int_order_agg` model aggregates order items to calculate 
+      total order values and item counts, providing a summary of orders by 
+      customer and date. It reads from staging orders data in `stg_order_items` 
+      and joins it with the intermediate orders table `int_orders`, which 
+      contains customer information. The main transformation is aggregating 
+      order items by order ID, calculating sums for line totals and quantities, 
+      and then joining this aggregated data with the orders table to include 
+      additional details like order dates, statuses, and customer IDs. This 
+      model operates at a grain of one row per order, offering insights into 
+      total sales and item counts for each order. Analysts can use this dataset 
+      to analyze customer purchasing behavior, track sales performance over 
+      time, or identify trends in order volumes by region.
+    columns:
+      - name: order_id
+        description: The `order_id` column represents a unique identifier for 
+          each order in the system, allowing analysts to track and analyze 
+          individual orders across various metrics. This integer value is likely
+          derived from a primary key or auto-incrementing field in the 
+          underlying database table.
+      - name: order_date
+        description: The `order_date` column represents the date on which each 
+          order was placed, capturing a key event in the customer's purchasing 
+          history. This column is likely derived from the original order records
+          and serves as a timestamp to facilitate analysis of orders by date.
+      - name: status
+        description: The `status` column represents a categorical value 
+          indicating the current state of an order, such as "pending", 
+          "shipped", or "delivered". This column is likely derived from a 
+          combination of other columns in the model, potentially including 
+          timestamps and order events, to provide a concise summary of the 
+          order's status.
+      - name: customer_id
+        description: The `customer_id` column represents a unique identifier for
+          each customer in the dataset, allowing analysts to track and analyze 
+          individual customers' behavior and interactions. This integer value is
+          likely derived from a primary key or unique identifier in the 
+          underlying source system, enabling joins with other tables that also 
+          contain this customer ID.
+      - name: customer_name
+        description: "The `customer_name` column represents the name of each customer
+          in a text format, capturing their identity and allowing for filtering, grouping,
+          and analysis by individual customers.\n\nThis column is likely derived from
+          a related table or database field, possibly through a join operation with
+          another model, as it appears to be aggregated alongside other order-related
+          metrics."
+      - name: country
+        description: The `country` column represents a categorical value 
+          indicating the geographic location of an order. It is likely derived 
+          from a related table, such as customer information or shipping 
+          details, and is used to group orders by their country of origin.
+      - name: item_count
+        description: The `item_count` column represents the total number of 
+          items in each order, aggregated across all relevant transactions. This
+          value is calculated by summing up the quantity of individual items 
+          within each order, providing a count of unique items per order.
+      - name: order_total
+        description: The `order_total` column represents the total amount spent 
+          by a customer on an individual order. It is calculated by aggregating 
+          the values of various order items, likely including product prices and
+          quantities.
