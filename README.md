@@ -39,7 +39,7 @@ Each plugin integrates seamlessly into the Airflow webserver — built using **F
 ## 📦 Components DBT
 | Component | Description | Documentation |
 |------------|--------------|----------------|
-| **dbt-tools** | llm based docs cli tool for dbt. | [View Docs](dbt_tools/dbt_tools/README.md) |
+| **dbt-tools** | llm based docs cli tool for dbt. | [View Docs](dbt_tools/README.md) |
 
 ---
 
