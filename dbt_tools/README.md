@@ -63,54 +63,57 @@ Because **Ollama runs 100% locally**, ensuring no prompts or data ever leave you
 
 ```mermaid
 flowchart LR
-    subgraph DBT[dbt project]
-        DbtModels[dbt models\n+.sql files]
-        SchemaYml[schema.yml\n(descriptions)]
-        DbtProjectYml[dbt_project.yml]
+
+    subgraph DBT["dbt project"]
+        DbtModels["dbt models (*.sql)"]
+        SchemaYml["schema.yml (descriptions)"]
+        DbtProjectYml["dbt_project.yml"]
     end
 
-    subgraph Target[dbt target/]
-        Manifest[manifest.json]
-        Catalog[catalog.json\n(optional)]
+    subgraph Target["target/ directory"]
+        Manifest["manifest.json"]
+        Catalog["catalog.json (optional)"]
     end
 
-    subgraph Profiles[profiles.yml]
-        ProfileDev[profile + dev target\n(Postgres / Redshift)]
+    subgraph Profiles["profiles.yml"]
+        ProfileDev["dev target (Postgres / Redshift)"]
     end
 
-    subgraph CLI[dbt-llm-docs CLI]
-        Typer[Typer app\n(init, list, llm-docs-generate)]
-        Prompts[prompts/\nmodel.md.j2\ncolumn.md.j2]
-        Selector[model selection\n--select/--exclude/--tags]
-        Profiler[optional data profiling\n(--use_data Y)]
-        Writer[write descriptions\nto schema.yml]
+    subgraph CLI["dbt-llm-docs CLI"]
+        Typer["Typer CLI (init, list, generate)"]
+        Prompts["Jinja templates (model.md.j2, column.md.j2)"]
+        Selector["Model selector (--select / --exclude / --tags)"]
+        Profiler["Optional data profiler (--use_data Y)"]
+        Writer["Writes descriptions to schema.yml"]
     end
 
-    subgraph LLMBackends[LLM backends]
-        Ollama[Ollama\n(local)]
-        OpenAI[OpenAI / compatible\n(remote)]
+    subgraph LLMBackends["LLM Backends"]
+        Ollama["Ollama (local)"]
+        OpenAI["OpenAI / compatible (cloud)"]
     end
 
-    subgraph Warehouse[Data warehouse]
-        DB[(Postgres / Redshift)]
+    subgraph Warehouse["Data Warehouse"]
+        DB["Postgres / Redshift"]
     end
 
     DbtModels --> Target
     DbtProjectYml --> Profiles
 
-    Target -->|load_manifest + load_catalog| CLI
-    Profiles -->|connection info| Profiler
-    DB -->|sample data\n(profile_query_for_llm)| Profiler
+    Target --> CLI
+    Catalog --> CLI
+    Profiles --> Profiler
+    DB --> Profiler
 
-    Prompts -->|render Jinja| Typer
+    Prompts --> Typer
     Typer --> Selector
-    Selector -->|chosen models\n+ columns| Typer
+    Selector --> LLMBackends
 
-    Typer -->|model + column prompts\n(+ optional profiles)| LLMBackends
-    LLMBackends -->|descriptions| Writer
+    Profiler --> LLMBackends
+    LLMBackends --> Writer
 
     Writer --> SchemaYml
-    SchemaYml -->|dbt docs serve| DocsUI[dbt docs UI]
+    SchemaYml --> DocsUI["dbt docs UI"]
+
 
 
 ## 🤖 Installing Ollama (Recommended for Privacy)
