@@ -28,13 +28,18 @@ Each plugin integrates seamlessly into the Airflow webserver — built using **F
 
 ---
 
-## 📦 Components
+## 📦 Components Airflow
 
 | Component | Description | Documentation |
 |------------|--------------|----------------|
 | **Helpers** | Core Python utilities and connection helpers used by all plugins. | [View Helpers Docs](plugins/air_labs_helpers/README.md) |
 | **Bulk Pause / Unpause API** | FastAPI-based Airflow plugin to pause or unpause DAGs in bulk. | [View API Docs](plugins/air_labs_bulk_pause_api/README.md) |
 | **Bulk Pause / Unpause UI** | React-powered UI extension integrated into the Airflow sidebar for bulk DAG control. | [View UI Docs](plugins/air_labs_bulk_pause_unpause_ui/README.md) |
+
+## 📦 Components DBT
+| Component | Description | Documentation |
+|------------|--------------|----------------|
+| **dbt-tools** | llm based docs cli tool for dbt. | [View Docs](dbt_tools/dbt_tools/README.md) |
 
 ---
 

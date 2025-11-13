@@ -1,10 +1,10 @@
 [project]
-name = "dbt-tools"
-version = "0.1.0"
+name = "dbt-power-tools"
+version = "0.1.1"
 description = "CLI to auto-generate dbt docs using LLMs (Ollama-first)."
 readme = "README.md"
 requires-python = ">=3.9"
-authors = [{name="Your Name"}]
+authors = [{name="Rahul Rajasekharan"}]
 dependencies = [
   "typer>=0.12",
   "rich>=13.7",

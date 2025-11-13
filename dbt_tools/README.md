@@ -161,7 +161,7 @@ Refer to: https://ollama.com/download
 
 ```bash
 
-pip install dbt-tools
+pip install dbt-power-tools
 
 ```
 
@@ -169,7 +169,7 @@ pip install dbt-tools
 
 ```bash
 
-git clone <your-repo>
+git clone 
 cd dbt-tools
 
 python -m venv .venv
