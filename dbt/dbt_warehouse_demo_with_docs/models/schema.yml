@@ -1,0 +1,649 @@
+models:
+  - name: int_order_agg
+    description: The `int_order_agg` model aggregates order items to calculate 
+      total order values and item counts, providing a summary of orders by 
+      customer and date. It reads from staging orders data in `stg_order_items` 
+      and joins it with the intermediate orders table `int_orders`, which 
+      contains customer information. The main transformation is aggregating 
+      order items by order ID, calculating sums for line totals and quantities, 
+      and then joining this aggregated data with the orders table to include 
+      additional details like order dates, statuses, and customer IDs. This 
+      model operates at a grain of one row per order, offering insights into 
+      total sales and item counts for each order. Analysts can use this dataset 
+      to analyze customer purchasing behavior, track sales performance over 
+      time, or identify trends in order volumes by region.
+    columns:
+      - name: order_id
+        description: The `order_id` column represents a unique identifier for 
+          each order in the system, allowing analysts to track and analyze 
+          individual orders across various metrics. This integer value is likely
+          derived from a primary key or auto-incrementing field in the 
+          underlying database table.
+      - name: order_date
+        description: The `order_date` column represents the date on which each 
+          order was placed, capturing a key event in the customer's purchasing 
+          history. This column is likely derived from the original order records
+          and serves as a timestamp to facilitate analysis of orders by date.
+      - name: status
+        description: The `status` column represents a categorical value 
+          indicating the current state of an order, such as "pending", 
+          "shipped", or "delivered". This column is likely derived from a 
+          combination of other columns in the model, potentially including 
+          timestamps and order events, to provide a concise summary of the 
+          order's status.
+      - name: customer_id
+        description: The `customer_id` column represents a unique identifier for
+          each customer in the dataset, allowing analysts to track and analyze 
+          individual customers' behavior and interactions. This integer value is
+          likely derived from a primary key or unique identifier in the 
+          underlying source system, enabling joins with other tables that also 
+          contain this customer ID.
+      - name: customer_name
+        description: "The `customer_name` column represents the name of each customer
+          in a text format, capturing their identity and allowing for filtering, grouping,
+          and analysis by individual customers.\n\nThis column is likely derived from
+          a related table or database field, possibly through a join operation with
+          another model, as it appears to be aggregated alongside other order-related
+          metrics."
+      - name: country
+        description: The `country` column represents a categorical value 
+          indicating the geographic location of an order. It is likely derived 
+          from a related table, such as customer information or shipping 
+          details, and is used to group orders by their country of origin.
+      - name: item_count
+        description: The `item_count` column represents the total number of 
+          items in each order, aggregated across all relevant transactions. This
+          value is calculated by summing up the quantity of individual items 
+          within each order, providing a count of unique items per order.
+      - name: order_total
+        description: The `order_total` column represents the total amount spent 
+          by a customer on an individual order. It is calculated by aggregating 
+          the values of various order items, likely including product prices and
+          quantities.
+  - name: dim_customers
+    description: The `dim_customers` model represents a customer dimension 
+      dataset used in business intelligence and reporting. It reads from the 
+      intermediate "int_customers" table, which aggregates or transforms staging
+      data into a standardized format for analysis. The model does not apply any
+      additional filters or calculations; it simply selects all available 
+      columns from this intermediate table. As a result, the output has one row 
+      per customer, providing detailed information about each individual 
+      customer. Analysts and downstream models can use this dataset to analyze 
+      customer behavior, demographics, and other relevant attributes for 
+      business insights and decision-making.
+    columns:
+      - name: customer_id
+        description: The `customer_id` column uniquely identifies each 
+          individual customer in the database, serving as a primary key to 
+          distinguish between different customers. It is likely used to 
+          establish relationships with other tables that contain 
+          customer-specific information, such as orders or transactions.
+      - name: customer_name
+        description: "The `customer_name` column represents the full name of each
+          customer in our database, capturing their personal identifier and primary
+          means of recognition within our business operations.\n\nThis column is a
+          fundamental attribute of our customers, used to establish individual records
+          and facilitate various downstream analyses that rely on accurate customer
+          identification."
+      - name: email
+        description: The `email` column in the `dim_customers` model represents 
+          a customer's primary contact email address, which is stored as plain 
+          text. This column captures the unique identifier used by customers to 
+          communicate with the organization.
+      - name: signup_date
+        description: The `signup_date` column represents the date when a 
+          customer first signed up for the service. It indicates the point in 
+          time when a new customer account was created.
+      - name: country
+        description: The `country` column in the `dim_customers` model 
+          represents a customer's geographic location, indicating where they are
+          based. This information is likely derived from a customer's address 
+          and is used to categorize customers by their country of origin.
+      - name: locale
+        description: The `locale` column represents the geographic region or 
+          language setting associated with each customer, indicating where they 
+          are located or prefer to interact with the business. This information 
+          is likely used to tailor marketing efforts, product offerings, or 
+          support services to specific regions or languages.
+  - name: stg_products
+    description: The `stg_products` model represents a staging process that 
+      aggregates product information from the "products" table in the database. 
+      It reads from this staging area, transforming raw product data into a 
+      standardized format for analysis and reporting purposes. The main 
+      transformations include standardizing product names and categories to 
+      title case, converting list prices to a consistent numeric format, and 
+      casting product IDs as integers. This model maintains one row per unique 
+      product, providing a detailed view of each item in the catalog. Analysts 
+      can use this dataset to analyze product offerings, pricing strategies, or 
+      customer preferences by product category.
+    columns:
+      - name: product_id
+        description: "The `product_id` column uniquely identifies each product in
+          the database, serving as a primary key that links related data across different
+          tables and models. It represents a unique identifier assigned to each product,
+          allowing for efficient querying and joining of product-related information.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 10.00 |\n| Max          | 13.00 |\n| Mean         | 11.50 |\n\
+          | Std dev      | 1.29 |\n| Examples     | 10, 11, 12      |"
+      - name: product_name
+        description: "The `product_name` column represents the name of a product in
+          the database, capturing its descriptive label used to identify and distinguish
+          it from other products.\n\nThis column is likely sourced directly from the
+          underlying data source, providing a straightforward representation of the
+          product's name without any additional computation or transformation.\n\n\
+          **Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Keyboard, Mouse, Monitor      |"
+      - name: category
+        description: "The `category` column represents a product's classification
+          within the business, indicating its type or grouping. This classification
+          is likely used to organize and filter products in various analyses and reports.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Peripherals, Display, Accessories   \
+          \   |"
+      - name: list_price
+        description: "The `list_price` column represents the original price at which
+          a product was listed for sale, measured in dollars and cents with up to
+          two decimal places of precision. This value is likely stored as-is from
+          the source system, without any transformations or calculations applied.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 7.99 |\n| Max          | 149.99 |\n| Mean         | 50.87 |\n\
+          | Std dev      | 66.71 |\n| Examples     | 30.0, 15.5, 149.99      |"
+  - name: stg_orders
+    description: 'The `stg_orders` model represents the staging process of orders
+      data, which involves transforming raw order information into a standardized
+      format suitable for analysis. It reads from the "orders" table in the staging
+      area, which contains unprocessed order records. The model applies several transformations
+      to this data: it converts certain columns (order_id and customer_id) to integer
+      types, casts the order_date column to date format, and standardizes the status
+      field by converting it to lowercase. This results in a dataset with one row
+      per order, providing detailed information about each transaction. Analysts can
+      use this model as an intermediate step for further analysis or aggregation,
+      such as calculating total sales by customer or analyzing order trends over time.'
+    columns:
+      - name: order_id
+        description: "The `order_id` column uniquely identifies each order in the
+          system, serving as a primary key to distinguish individual transactions.
+          It represents a unique identifier assigned to each order, allowing for efficient
+          tracking and analysis of customer purchases.\n\n**Column statistics**\n\n\
+          | Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 1001.00 |\n| Max          | 1004.00 |\n| Mean         | 1002.50
+          |\n| Std dev      | 1.29 |\n| Examples     | 1001, 1002, 1003      |"
+      - name: customer_id
+        description: "The `customer_id` column represents a unique identifier assigned
+          to each customer in the system, allowing for the tracking and management
+          of individual customers across orders. This column is likely used to establish
+          relationships between orders and their corresponding customers through joins
+          with other tables.\n\n**Column statistics**\n\n| Metric       | Value  \
+          \              |\n|-------------|----------------------|\n| Missing %  \
+          \  | 0.0%       |\n| Unique %     | 75.0%        |\n| Min          | 1.00
+          |\n| Max          | 3.00 |\n| Mean         | 1.75 |\n| Std dev      | 0.96
+          |\n| Examples     | 1, 2, 3      |"
+      - name: order_date
+        description: "The `order_date` column represents the date on which each order
+          was placed by a customer. It is a key column that identifies the timing
+          of orders and can be used to analyze sales trends over time.\n\n**Column
+          statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | 2024-04-01, 2024-04-03, 2024-04-05  \
+          \    |"
+      - name: status
+        description: "The `status` column represents the current state of an order,
+          indicating whether it has been fulfilled, cancelled, or is still pending.
+          This information can be used to track order progress and identify potential
+          issues in the fulfillment process.\n\n**Column statistics**\n\n| Metric\
+          \       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | completed, pending, cancelled      |"
+  - name: stg_order_items
+    description: The `stg_order_items` model represents the aggregation of order
+      item details from staging orders data. It reads from the "order items" 
+      staging table, which contains raw data on products ordered by customers. 
+      The model transforms this data by calculating the total cost for each 
+      order item based on quantity and unit price. This results in a dataset 
+      with one row per order item, providing detailed information about the 
+      products included in each order. Analysts can use this dataset to analyze 
+      sales trends, product performance, or customer purchasing behavior, 
+      ultimately informing business decisions around inventory management, 
+      pricing strategies, or marketing campaigns.
+    columns:
+      - name: order_id
+        description: "The `order_id` column represents a unique identifier for each
+          order in the system, allowing analysts to track and analyze individual orders
+          across different metrics and dimensions.\n\nThis column is likely used to
+          join with other tables that contain order-related information, such as customer
+          details or order history, enabling comprehensive analysis of customer behavior
+          and order patterns.\n\n**Column statistics**\n\n| Metric       | Value \
+          \               |\n|-------------|----------------------|\n| Missing % \
+          \   | 0.0%       |\n| Unique %     | 75.0%        |\n| Min          | 1001.00
+          |\n| Max          | 1003.00 |\n| Mean         | 1001.75 |\n| Std dev   \
+          \   | 0.96 |\n| Examples     | 1001, 1002, 1003      |"
+      - name: product_id
+        description: "The `product_id` column represents a unique identifier for each
+          product in the order items dataset, allowing analysts to distinguish between
+          different products and their associated orders.\n\nThis column is likely
+          used to establish relationships with other tables that contain product information,
+          enabling analysts to perform joins and aggregations across related data
+          sets.\n\n**Column statistics**\n\n| Metric       | Value               \
+          \ |\n|-------------|----------------------|\n| Missing %    | 0.0%     \
+          \  |\n| Unique %     | 100.0%        |\n| Min          | 10.00 |\n| Max\
+          \          | 13.00 |\n| Mean         | 11.50 |\n| Std dev      | 1.29 |\n\
+          | Examples     | 10, 11, 12      |"
+      - name: quantity
+        description: "The `quantity` column represents the number of items ordered
+          in each transaction, indicating the scale of the purchase. It is a fundamental
+          attribute of the order item, providing insight into sales volume and customer
+          behavior.\n\n**Column statistics**\n\n| Metric       | Value           \
+          \     |\n|-------------|----------------------|\n| Missing %    | 0.0% \
+          \      |\n| Unique %     | 75.0%        |\n| Min          | 1.00 |\n| Max\
+          \          | 3.00 |\n| Mean         | 1.75 |\n| Std dev      | 0.96 |\n\
+          | Examples     | 1, 2, 3      |"
+      - name: unit_price
+        description: "The `unit_price` column represents the price of each order item
+          before any discounts or taxes are applied. It is a calculated value derived
+          from the original transaction amount and is used to calculate total revenue
+          and other financial metrics in downstream models.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 7.99 |\n| Max          | 140.00 |\n| Mean         | 48.00 |\n\
+          | Std dev      | 61.95 |\n| Examples     | 29.0, 15.0, 140.0      |"
+      - name: line_total
+        description: "The `line_total` column represents the total cost of each order
+          item, calculated by multiplying the quantity and unit price of the item.
+          It is a derived value that indicates the monetary value associated with
+          each individual line in an order.\n\n**Column statistics**\n\n| Metric \
+          \      | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 23.97 |\n| Max          | 140.00 |\n| Mean         | 55.74 |\n\
+          | Std dev      | 56.23 |\n| Examples     | 29.0, 30.0, 140.0      |"
+  - name: int_orders
+    description: "The `int_orders` model represents the business process of integrating
+      orders data from staging into a unified view that includes customer information.
+      It reads from two primary sources: staging orders data and the customer dimension,
+      which provides additional context on customers. The model performs a left join
+      between these two datasets based on customer IDs, ensuring all orders are included
+      even if there's no matching customer record. This results in a dataset with
+      one row per order, containing details such as order status, date, ID, customer
+      name, and country. Analysts or downstream models can use this integrated view
+      to analyze customer behavior, track order history, or perform other business
+      intelligence tasks that require a comprehensive understanding of orders data
+      in relation to customers."
+    columns:
+      - name: order_id
+        description: "The `order_id` column uniquely identifies each order in the
+          database and serves as a primary key to link related records together. It
+          is likely used to join orders with other tables, such as customers or products,
+          to facilitate analysis of sales and customer behavior.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 1001.00 |\n| Max          | 1004.00 |\n| Mean         | 1002.50
+          |\n| Std dev      | 1.29 |\n| Examples     | 1001, 1002, 1003      |"
+      - name: order_date
+        description: "The `order_date` column represents the date on which each order
+          was placed by a customer. It is a key column that identifies the timing
+          of orders and can be used to analyze sales trends over time.\n\n**Column
+          statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | 2024-04-01, 2024-04-03, 2024-04-05  \
+          \    |"
+      - name: status
+        description: "The `status` column represents the current state of an order,
+          indicating whether it has been fulfilled, cancelled, or is still pending.
+          This information can be used to track order progress and identify potential
+          issues that require attention.\n\n**Column statistics**\n\n| Metric    \
+          \   | Value                |\n|-------------|----------------------|\n|
+          Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min    \
+          \      | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std dev\
+          \      | n/a |\n| Examples     | completed, pending, cancelled      |"
+      - name: customer_id
+        description: "The `customer_id` column represents a unique identifier assigned
+          to each customer in the database, allowing for tracking and analysis of
+          individual customers' orders. This column is likely used to establish relationships
+          with other tables that contain customer information or order history.\n\n\
+          **Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | 1.00 |\n| Max          | 3.00 |\n| Mean         | 1.75 |\n| Std
+          dev      | 0.96 |\n| Examples     | 1, 2, 3      |"
+      - name: customer_name
+        description: "The `customer_name` column represents the full name of each
+          customer associated with an order in the database. It is a text field that
+          stores the actual names provided by customers during checkout or account
+          creation.\n\n**Column statistics**\n\n| Metric       | Value           \
+          \     |\n|-------------|----------------------|\n| Missing %    | 0.0% \
+          \      |\n| Unique %     | 75.0%        |\n| Min          | n/a |\n| Max\
+          \          | n/a |\n| Mean         | n/a |\n| Std dev      | n/a |\n| Examples\
+          \     | Alice Smith, Bob Lee, Chandra Iyer      |"
+      - name: country
+        description: "The `country` column represents the geographic region where
+          each order was placed, indicating the international scope of sales. This
+          information is likely used to analyze and segment orders by market, inform
+          global business strategies, and support cross-border reporting requirements.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | UK, US, IN      |"
+  - name: int_products
+    description: The `int_products` model represents a snapshot of product 
+      information from the staging area. It reads from the "stg_products" table 
+      in the "dbt_db"."stage" relation, which contains raw data from various 
+      sources. This model transforms the data by selecting relevant columns 
+      (product ID, name, category, and list price) without applying any complex 
+      calculations or aggregations. The result is a dataset at the product level
+      of detail, providing a clear view of each product's characteristics. 
+      Analysts can use this dataset to analyze product offerings, pricing 
+      strategies, and categorization decisions, informing business decisions 
+      around product management and marketing initiatives.
+    columns:
+      - name: product_id
+        description: "The `product_id` column uniquely identifies each product in
+          the database and serves as a primary key to establish relationships with
+          other tables that reference products. It is likely used to join this table
+          with other models, such as those containing product information or sales
+          data.\n\n**Column statistics**\n\n| Metric       | Value               \
+          \ |\n|-------------|----------------------|\n| Missing %    | 0.0%     \
+          \  |\n| Unique %     | 100.0%        |\n| Min          | 10.00 |\n| Max\
+          \          | 13.00 |\n| Mean         | 11.50 |\n| Std dev      | 1.29 |\n\
+          | Examples     | 10, 11, 12      |"
+      - name: product_name
+        description: "The `product_name` column represents the descriptive name of
+          a product in the database, capturing its unique identifier and label for
+          easy reference. This column is likely used to identify specific products
+          within the inventory or catalog, potentially serving as a key column for
+          joining with other tables that contain product-related data.\n\n**Column
+          statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Keyboard, Mouse, Monitor      |"
+      - name: category
+        description: "The `category` column represents a categorical classification
+          of products, indicating their type or grouping within the product hierarchy.
+          This classification is likely used to organize and analyze product data
+          by category, potentially informing business decisions such as inventory
+          management, marketing campaigns, or sales strategies.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Peripherals, Display, Accessories   \
+          \   |"
+      - name: list_price
+        description: "The `list_price` column represents the suggested retail price
+          of a product, indicating its intended sale value to customers. This value
+          is likely derived from the product's manufacturer or supplier information
+          and may be used in pricing strategies or revenue calculations.\n\n**Column
+          statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 7.99 |\n| Max          | 149.99 |\n| Mean         | 50.87 |\n\
+          | Std dev      | 66.71 |\n| Examples     | 30.0, 15.5, 149.99      |"
+  - name: dim_products
+    description: The `dim_products` model represents a dimension table that 
+      captures product information from the staging area. It reads from the 
+      intermediate "int_products" table, which contains raw product data. The 
+      model does not apply any transformations to this data; instead, it simply 
+      selects all columns and rows from the source table. As a result, the 
+      output has the same level of detail as the input, with one row per 
+      product. Analysts can use this dataset to analyze product characteristics,
+      trends, or relationships in downstream models or reports.
+    columns:
+      - name: product_id
+        description: "The `product_id` column uniquely identifies each product in
+          the database, serving as a primary key to distinguish between different
+          products.\n\nThis column is likely used to establish relationships with
+          other tables that reference products, such as sales or inventory records.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 10.00 |\n| Max          | 13.00 |\n| Mean         | 11.50 |\n\
+          | Std dev      | 1.29 |\n| Examples     | 10, 11, 12      |"
+      - name: product_name
+        description: "The `product_name` column represents the descriptive name of
+          a product in the database, capturing its title or label as it appears to
+          customers. This information is likely used to identify and categorize products
+          across various business processes and analyses.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Keyboard, Mouse, Monitor      |"
+      - name: category
+        description: "The `category` column in the `dim_products` model represents
+          a product's classification within a specific hierarchy, categorizing products
+          into distinct groups such as electronics, clothing, or home goods. This
+          categorization is likely based on a predefined taxonomy or ontology used
+          by the business to organize and analyze their product offerings.\n\n**Column
+          statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Peripherals, Display, Accessories   \
+          \   |"
+      - name: list_price
+        description: "The `list_price` column represents the standard price at which
+          a product is sold to customers, measured in dollars and cents with up to
+          two decimal places of precision. This value is likely derived from the product's
+          base cost or other pricing factors, but its exact computation is not directly
+          evident from this model alone.\n\n**Column statistics**\n\n| Metric    \
+          \   | Value                |\n|-------------|----------------------|\n|
+          Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min   \
+          \       | 7.99 |\n| Max          | 149.99 |\n| Mean         | 50.87 |\n\
+          | Std dev      | 66.71 |\n| Examples     | 30.0, 15.5, 149.99      |"
+  - name: stg_customers
+    description: The `stg_customers` model represents a staging process that 
+      prepares customer data for analysis. It reads from the "customers" table 
+      in the staging area, which contains raw customer information. The model 
+      transforms this data by standardizing customer names to title case, 
+      converting email addresses to lowercase, and formatting dates and country 
+      codes for consistency. The output is at the individual customer level, 
+      providing a detailed view of each customer's attributes. Analysts can use 
+      this dataset to analyze customer demographics, behavior, or other 
+      characteristics, and downstream models may leverage it as input for more 
+      complex analyses or reporting.
+    columns:
+      - name: customer_id
+        description: "The `customer_id` column represents a unique identifier assigned
+          to each individual customer in the system. It is used to distinguish and
+          track specific customers across various interactions and transactions.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 1.00 |\n| Max          | 4.00 |\n| Mean         | 2.50 |\n|
+          Std dev      | 1.29 |\n| Examples     | 1, 2, 3      |"
+      - name: customer_name
+        description: "The `customer_name` column represents the full name of each
+          customer in our database, capturing their personal identification information.
+          This column is a fundamental attribute used to identify and distinguish
+          individual customers within our system.\n\n**Column statistics**\n\n| Metric\
+          \       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Alice Smith, Bob Lee, Chandra Iyer  \
+          \    |"
+      - name: email
+        description: "The `email` column represents a customer's primary contact information,
+          storing their unique identifier in a text format. This column is likely
+          used to identify and authenticate customers across various business processes
+          and systems.\n\n**Column statistics**\n\n| Metric       | Value        \
+          \        |\n|-------------|----------------------|\n| Missing %    | 0.0%\
+          \       |\n| Unique %     | 100.0%        |\n| Min          | n/a |\n| Max\
+          \          | n/a |\n| Mean         | n/a |\n| Std dev      | n/a |\n| Examples\
+          \     | alice@example.com, bob.lee@example.com, chandra@example.com    \
+          \  |"
+      - name: signup_date
+        description: "The `signup_date` column represents the date when a customer
+          signed up for a service. It is a timestamp that indicates the point in time
+          when a new customer account was created.\n\n**Column statistics**\n\n| Metric\
+          \       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | 2024-01-10, 2024-02-05, 2024-03-12  \
+          \    |"
+      - name: country
+        description: "The `country` column represents a customer's geographic location,
+          indicating where they are based. This information is likely used to analyze
+          regional sales trends, market demographics, and other business metrics that
+          require country-level granularity.\n\n**Column statistics**\n\n| Metric\
+          \       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | UK, US, IN      |"
+  - name: fct_orders
+    description: The `fct_orders` model represents the fact table for orders in 
+      the database. It reads from the "staging orders data" aggregated by the 
+      intermediate model `int_order_agg`. This model transforms the raw order 
+      data into a summarized view, likely grouping orders by customer and date 
+      to provide a detailed history of all orders placed. The grain of this 
+      dataset is one row per order, offering a comprehensive level of detail for
+      analysis. Analysts can use this dataset to analyze order trends over time,
+      understand customer purchasing behavior, or identify key drivers of sales 
+      growth.
+    columns:
+      - name: order_id
+        description: "The `order_id` column represents a unique identifier for each
+          order in the system, allowing analysts to track and analyze individual orders
+          across various metrics. This integer value is likely assigned by the system
+          when an order is placed and remains constant throughout the order's lifecycle.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 1001.00 |\n| Max          | 1003.00 |\n| Mean         | 1002.00
+          |\n| Std dev      | 1.00 |\n| Examples     | 1001, 1002, 1003      |"
+      - name: order_date
+        description: "The `order_date` column represents the date on which each order
+          was placed by a customer. It captures the timestamp of when the order occurred,
+          allowing analysts to analyze and report on orders over time.\n\n**Column
+          statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | 2024-04-01, 2024-04-03, 2024-04-05  \
+          \    |"
+      - name: status
+        description: "The `status` column in the `fct_orders` model represents the
+          current state of each order, indicating whether it is pending, shipped,
+          delivered, or cancelled.\n\nThis column appears to be a categorical value
+          that captures the progression of orders through various stages, potentially
+          derived from a combination of other columns such as order dates and fulfillment
+          events.\n\n**Column statistics**\n\n| Metric       | Value             \
+          \   |\n|-------------|----------------------|\n| Missing %    | 0.0%   \
+          \    |\n| Unique %     | 66.7%        |\n| Min          | n/a |\n| Max \
+          \         | n/a |\n| Mean         | n/a |\n| Std dev      | n/a |\n| Examples\
+          \     | completed, pending      |"
+      - name: customer_id
+        description: "The `customer_id` column represents a unique identifier for
+          each customer in the orders dataset, allowing analysts to track and analyze
+          individual customers' behavior across multiple orders.\n\nThis column is
+          likely derived from a separate customer dimension table or database, and
+          its value can be used to join with other tables that contain customer information.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 66.7%        |\n| Min  \
+          \        | 1.00 |\n| Max          | 2.00 |\n| Mean         | 1.33 |\n| Std
+          dev      | 0.58 |\n| Examples     | 1, 2      |"
+      - name: customer_name
+        description: "The `customer_name` column represents the full name of each
+          customer who placed orders in the system. It is a string field that stores
+          the actual names provided by customers during registration or order placement.\n\
+          \n**Column statistics**\n\n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 66.7%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Alice Smith, Bob Lee      |"
+      - name: country
+        description: "The `country` column in the `fct_orders` model represents the
+          geographic region where each order was placed. It stores a string value
+          indicating the country of origin, which can be used to analyze sales patterns
+          and customer demographics across different regions.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 66.7%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | UK, US      |"
+      - name: item_count
+        description: "The `item_count` column represents the total number of items
+          in each order, indicating the quantity of products purchased by a customer
+          in a single transaction. This count is likely derived from aggregating individual
+          item quantities within each order, providing insight into sales volume and
+          customer purchasing behavior.\n\n**Column statistics**\n\n| Metric     \
+          \  | Value                |\n|-------------|----------------------|\n| Missing
+          %    | 0.0%       |\n| Unique %     | 66.7%        |\n| Min          | 1.00
+          |\n| Max          | 3.00 |\n| Mean         | 2.33 |\n| Std dev      | 1.15
+          |\n| Examples     | 3, 1      |"
+      - name: order_total
+        description: "The `order_total` column represents the total monetary value
+          of each order in the database, calculated by summing up all line items within
+          a given order.\n\nThis calculation is likely performed by aggregating the
+          values from related tables, such as `fct_order_items`, which are joined
+          to this model through foreign key relationships.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | 23.97 |\n| Max          | 140.00 |\n| Mean         | 74.32 |\n\
+          | Std dev      | 59.51 |\n| Examples     | 59.0, 140.0, 23.97      |"
+  - name: int_customers
+    description: The `int_customers` model represents the customer dimension 
+      dataset, which captures key information about customers in the system. It 
+      reads from the staging layer, specifically the "stg_customers" table, 
+      which contains raw customer data. The model transforms this data by 
+      applying a simple conditional logic to determine the locale based on the 
+      country of origin, effectively categorizing customers into 
+      English-speaking regions (UK and US). This results in a dataset with one 
+      row per customer, providing a detailed view of each individual's 
+      attributes. Analysts can use this dataset to analyze customer behavior, 
+      segment markets, or perform other customer-centric analyses downstream.
+    columns:
+      - name: customer_id
+        description: "The `customer_id` column uniquely identifies each individual
+          customer in the database, serving as a primary key to distinguish between
+          different customers.\n\nThis column is likely used to establish relationships
+          with other tables that also reference customers, such as orders or transactions,
+          allowing analysts to analyze customer behavior and interactions across multiple
+          touchpoints.\n\n**Column statistics**\n\n| Metric       | Value        \
+          \        |\n|-------------|----------------------|\n| Missing %    | 0.0%\
+          \       |\n| Unique %     | 100.0%        |\n| Min          | 1.00 |\n|
+          Max          | 4.00 |\n| Mean         | 2.50 |\n| Std dev      | 1.29 |\n\
+          | Examples     | 1, 2, 3      |"
+      - name: customer_name
+        description: "The `customer_name` column represents the full name of each
+          customer in our database, capturing their personal identification information.
+          This column is a fundamental attribute that helps us identify and distinguish
+          individual customers within our dataset.\n\n**Column statistics**\n\n| Metric\
+          \       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | Alice Smith, Bob Lee, Chandra Iyer  \
+          \    |"
+      - name: email
+        description: "The `email` column represents a customer's primary contact information,
+          storing their unique identifier in plain text format. This column is likely
+          used to facilitate communication and authentication with customers through
+          various channels.\n\n**Column statistics**\n\n| Metric       | Value   \
+          \             |\n|-------------|----------------------|\n| Missing %   \
+          \ | 0.0%       |\n| Unique %     | 100.0%        |\n| Min          | n/a
+          |\n| Max          | n/a |\n| Mean         | n/a |\n| Std dev      | n/a
+          |\n| Examples     | alice@example.com, bob.lee@example.com, chandra@example.com\
+          \      |"
+      - name: signup_date
+        description: "The `signup_date` column represents the date when a customer
+          signed up for our service. It is a timestamp that indicates the point in
+          time when a new customer account was created.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 100.0%        |\n| Min \
+          \         | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | 2024-01-10, 2024-02-05, 2024-03-12  \
+          \    |"
+      - name: country
+        description: "The `country` column represents a customer's geographic location,
+          indicating the country where they are based. This information is likely
+          used to analyze and segment customers by region, informing business decisions
+          related to marketing, sales, and product offerings.\n\n**Column statistics**\n\
+          \n| Metric       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 75.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | UK, US, IN      |"
+      - name: locale
+        description: "The `locale` column represents a customer's geographic location,
+          indicating the language and cultural preferences associated with their region.
+          This information is likely used to tailor marketing campaigns, product offerings,
+          or user experience to specific regions.\n\n**Column statistics**\n\n| Metric\
+          \       | Value                |\n|-------------|----------------------|\n\
+          | Missing %    | 0.0%       |\n| Unique %     | 25.0%        |\n| Min  \
+          \        | n/a |\n| Max          | n/a |\n| Mean         | n/a |\n| Std
+          dev      | n/a |\n| Examples     | EN      |"

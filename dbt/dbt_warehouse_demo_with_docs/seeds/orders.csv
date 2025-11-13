@@ -1,0 +1,5 @@
+order_id,customer_id,order_date,status
+1001,1,2024-04-01,completed
+1002,1,2024-04-03,completed
+1003,2,2024-04-05,pending
+1004,3,2024-04-05,cancelled

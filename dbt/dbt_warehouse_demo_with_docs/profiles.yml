@@ -1,0 +1,14 @@
+dbt_warehouse_demo:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      threads: 4
+
+      # --- Connection settings ---
+      host: localhost       # or your PostgreSQL hostname
+      port: 5432
+      user: admin        # change if different
+      password: admin    # change if different
+      dbname: dbt_db 
+      schema: core     # the database name
