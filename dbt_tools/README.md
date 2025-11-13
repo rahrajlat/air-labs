@@ -116,6 +116,21 @@ flowchart LR
 
 ```
 
+> ### ⚠️ Important: Requires a Compiled dbt Project
+> `dbt-llm-docs` depends on dbt’s generated artifacts.  
+> Before running this tool, your dbt project **must be compiled** and the following files must exist in your `target/` directory:
+>
+> - `manifest.json` — required  
+> - `catalog.json` — optional but recommended for accurate column types  
+>
+> Generate them using:
+>
+> ```bash
+> dbt docs generate
+> ```
+>
+> If these artifacts are missing, the tool cannot discover models, columns, SQL, or metadata needed for documentation.
+
 ## 🤖 Installing Ollama (Recommended for Privacy)
 
 ### macOS / Linux
