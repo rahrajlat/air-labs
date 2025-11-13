@@ -39,6 +39,11 @@ When enabled:
 6. A Markdown stats table is appended to each column description  
 7. These appear in **dbt Docs → Documentation UI**
 
+## 🎥 Demo
+
+Bulk Pause / Unpause  
+👉 **[View Demo](../../demos/dbt.gif)**
+
 ### 🔒 Local LLM supported (Ollama)  
 Ensures **zero data leaves your machine**, making it suitable for sensitive environments.
 
