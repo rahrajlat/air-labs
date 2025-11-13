@@ -1,20 +1,29 @@
 # 🧰 Air-Labs Helpers
 
-The **Helpers** module provides shared utilities used across all Air-Labs plugins.  
-It standardizes how plugins interact with the Airflow REST API and connection management.
+The **Air-Labs Helpers** module provides the shared utilities that power all Air-Labs plugins.  
+It standardizes how plugins authenticate, communicate with the Airflow REST API, and manage connections — ensuring consistency across both API and UI extensions.
 
 ---
 
 ## 🔧 Features
 
-- Centralized API client (`AirflowClient`) for REST API interaction  
-- Built-in authentication support using `/auth/token`  
-- Simplified connection management via Airflow’s `conn_id`  
-- Consistent response formatting and error handling
+- 🚀 **Unified API Client** (`AirflowClient`) for interacting with the Airflow REST API  
+- 🔐 **Automatic authentication** using Airflow’s `/auth/token` endpoint  
+- 🔌 **Connection-based configuration** via Airflow’s `conn_id`  
+- 🧹 **Consistent error handling and response formatting**  
+- 🧱 Foundation used by all other Air-Labs plugin packages
 
 ---
 
-## 🧮 Usage Example
+## 📦 Installation
+
+```bash
+pip install air-labs-helpers
+```
+
+---
+
+## 🧮 Example Usage
 
 ```python
 from air_labs_helpers.client import AirflowClient
@@ -24,26 +33,37 @@ report = client.pause_dags(name_prefix="etl_")
 print(report)
 ```
 
-### Connection Setup (Required)
+---
 
-Before using the client, **create a connection** in the Airflow UI → *Admin → Connections*.
+## 🔌 Connection Setup (Required)
+
+Before using the client, create a connection in:
+
+**Airflow UI → Admin → Connections**
 
 | Field | Description | Example |
-|--------|--------------|----------|
-| Conn Id | Used in code | `airflow_api_conn` |
-| Conn Type | `http` or `https` | `http` |
-| Host | Airflow Webserver | `http://localhost:8080` |
-| Login | Username / Service Account | `admin` |
+|--------|-------------|-----------|
+| Conn Id | Used by your code | `airflow_api_conn` |
+| Conn Type | Must be `http` or `https` | `http` |
+| Host | Airflow Webserver URL | `http://localhost:8080` |
+| Login | Username or service account | `admin` |
 | Password | Password or API token | `mysecret` |
 
 ---
 
-### How It Works
+## ⚙️ How It Works
 
-1. Loads the Airflow connection from `conn_id`  
-2. Authenticates via `/auth/token`  
-3. Sends REST API requests to `/api/v1/...`  
-4. Returns structured results
+1. Loads connection details using the provided `conn_id`  
+2. Authenticates with Airflow via `/auth/token`  
+3. Calls the appropriate `/api/v1/...` endpoints  
+4. Returns structured JSON responses for easy consumption
+
+---
+
+## 🎥 Demo
+
+Bulk Pause / Unpause  
+👉 **[View Demo](../demos/bulk_pause.gif)**
 
 ---
 
