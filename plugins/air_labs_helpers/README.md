@@ -63,7 +63,7 @@ Before using the client, create a connection in:
 ## 🎥 Demo
 
 Bulk Pause / Unpause  
-👉 **[View Demo](demos/bulk_pause.gif)**
+👉 **[View Demo](../../demos/bulk_pause.gif)**
 
 ---
 
