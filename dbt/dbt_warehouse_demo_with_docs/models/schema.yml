@@ -60,3 +60,48 @@ models:
           by a customer on an individual order. It is calculated by aggregating 
           the values of various order items, likely including product prices and
           quantities.
+  - name: dim_customers
+    description: The `dim_customers` model represents a customer dimension 
+      dataset used in business intelligence and reporting. It reads from the 
+      intermediate "int_customers" table, which aggregates or transforms staging
+      data into a standardized format for analysis. The model does not apply any
+      additional filters or calculations; it simply selects all available 
+      columns from this intermediate table. As a result, the output has one row 
+      per customer, providing detailed information about each individual 
+      customer. Analysts and downstream models can use this dataset to analyze 
+      customer behavior, demographics, and other relevant attributes for 
+      business insights and decision-making.
+    columns:
+      - name: customer_id
+        description: The `customer_id` column uniquely identifies each 
+          individual customer in the database, serving as a primary key to 
+          distinguish between different customers. It is likely used to 
+          establish relationships with other tables that contain 
+          customer-specific information, such as orders or transactions.
+      - name: customer_name
+        description: "The `customer_name` column represents the full name of each
+          customer in our database, capturing their personal identifier and primary
+          means of recognition within our business operations.\n\nThis column is a
+          fundamental attribute of our customers, used to establish individual records
+          and facilitate various downstream analyses that rely on accurate customer
+          identification."
+      - name: email
+        description: The `email` column in the `dim_customers` model represents 
+          a customer's primary contact email address, which is stored as plain 
+          text. This column captures the unique identifier used by customers to 
+          communicate with the organization.
+      - name: signup_date
+        description: The `signup_date` column represents the date when a 
+          customer first signed up for the service. It indicates the point in 
+          time when a new customer account was created.
+      - name: country
+        description: The `country` column in the `dim_customers` model 
+          represents a customer's geographic location, indicating where they are
+          based. This information is likely derived from a customer's address 
+          and is used to categorize customers by their country of origin.
+      - name: locale
+        description: The `locale` column represents the geographic region or 
+          language setting associated with each customer, indicating where they 
+          are located or prefer to interact with the business. This information 
+          is likely used to tailor marketing efforts, product offerings, or 
+          support services to specific regions or languages.

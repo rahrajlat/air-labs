@@ -157,15 +157,27 @@ Refer to: https://ollama.com/download
 
 ---
 
-## 📦 Installation
+## 📦 Installation Pypi
 
 ```bash
+
+pip install dbt-tools
+
+```
+
+## 📦 Installation from source
+
+```bash
+
 git clone <your-repo>
-cd dbt-llm-docs
+cd dbt-tools
 
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
+
+
+
 ```
 
 Requires:
@@ -208,15 +220,33 @@ dbt-tools  list --project-dir . --target-dir target
 
 ### Generate documentation (local LLM)
 
+### Default behaviour is to use ollama
+
 ```bash
-dbt-tools llm-docs-generate   --project-dir .   --target-dir target   --backend ollama   --model llama3.1
+dbt-tools llm-docs-generate -project-dir . --target-dir target --select dim_customers 
 ```
 
 ### Generate documentation with real data profiling
 
 ```bash
-dbt-tools llm-docs-generate   --project-dir .   --target-dir target   --use_data Y   --select "core.*"   --overwrite
+dbt-tools llm-docs-generate   --project-dir . --target-dir target --select dim_customers --use-data Y
 ```
+
+
+### Generate documentation (open-ai)
+
+
+```bash
+dbt-tools llm-docs-generate -project-dir . --target-dir target --select dim_customers --backend openai
+```
+
+### Generate documentation with real data profiling
+
+```bash
+dbt-tools llm-docs-generate   --project-dir . --target-dir target --select dim_customers --use-data Y
+```
+
+
 
 ---
 
