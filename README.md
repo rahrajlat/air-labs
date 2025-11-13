@@ -48,6 +48,9 @@ Each plugin integrates seamlessly into the Airflow webserver — built using **F
 Bulk Pause / Unpause
 👉 [Bulk Pause Demo](./demos/bulk_pause.gif)
 
+DBT LLM Docs
+👉 [DBT LLM Docs](./demos/dbt.gif)
+
 ---
 
 ## ⚙️ Installation
