@@ -41,8 +41,8 @@ When enabled:
 
 ## 🎥 Demo
 
-Bulk Pause / Unpause  
-👉 **[View Demo](../../demos/dbt.gif)**
+dbt docs
+👉 **[View Demo](../demos/dbt.gif)**
 
 ### 🔒 Local LLM supported (Ollama)  
 Ensures **zero data leaves your machine**, making it suitable for sensitive environments.
